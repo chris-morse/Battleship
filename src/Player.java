@@ -1,8 +1,8 @@
 public class Player
 {
-    String username;
-
-    //GameBoard Board;
+    private static String username;
+    private static int numShips;
+    private static GameBoard gameBoard;
 
 
 
