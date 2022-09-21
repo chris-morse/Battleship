@@ -1,7 +1,7 @@
 public class GameView
 {
     //Data Members
-    GameModel model;
+    private GameModel model;
 
     //Methods
     GameView(GameModel gm) {model = gm;}
