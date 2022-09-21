@@ -8,8 +8,8 @@ public class Main
         Player player2 = new Player();
         GameBoard board1 = new GameBoard();
         GameBoard board2 = new GameBoard();
-        Ship[] ship1 = new Ship[4];
-        Ship[] ship2 = new Ship[4];
+        Ship[] ship1 = new Ship[5];
+        Ship[] ship2 = new Ship[5];
 
         GameModel model = new GameModel(board1, board2, ship1, ship2, player1, player2);
         GameView view = new GameView(model);
