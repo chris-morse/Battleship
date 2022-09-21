@@ -1,7 +1,8 @@
 public class GameBoard
 {
-    private static String[][] grid = new String[10][10];
+    private static int[][] grid = new int[10][10];
 
-
+    GameBoard(){}
+    void setGrid(int x, int y, int val) {grid[x][y] = val;}
 
 }
