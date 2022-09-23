@@ -1,3 +1,5 @@
+package Headers;
+
 public class GameModel
 {
     //Data Members
@@ -10,7 +12,7 @@ public class GameModel
 
     //Methods
     GameModel() {}
-    GameModel(GameBoard a, GameBoard b, Ship[] s1, Ship[] s2, Player p1, Player p2){
+    public GameModel(GameBoard a, GameBoard b, Ship[] s1, Ship[] s2, Player p1, Player p2){
               board1 = a; board2 = b; ship1 = s1; ship2 = s2; player1 = p1; player2 = p2; }
 
     GameBoard getBoard1() {return board1;}

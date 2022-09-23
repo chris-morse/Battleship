@@ -1,14 +1,16 @@
+package Headers;
+
 public class Player
 {
     //Data Members
     private static String username;
 
     //Methods
-    Player(){}
+    public Player(){}
     Player(String name) {username = name;}
 
-    String getName() {return username;}
-    void setName(String n) {username = n;}
+    public String getName() {return username;}
+    public void setName(String n) {username = n;}
 
 
 
