@@ -11,12 +11,19 @@ public class GameModel
     private Player player2;
 
     //Methods
-    GameModel() {}
-    public GameModel(GameBoard a, GameBoard b, Ship[] s1, Ship[] s2, Player p1, Player p2){
-              board1 = a; board2 = b; ship1 = s1; ship2 = s2; player1 = p1; player2 = p2; }
 
-    GameBoard getBoard1() {return board1;}
-    GameBoard getBoard2() {return board2;}
+    public GameModel(){
+        board1 = new GameBoard();
+        board2 = new GameBoard();
+        ship1 = new Ship[5];
+        ship2 = new Ship[5];
+        player1 = new Player();
+        player2 = new Player();
+    }
+
+
+    GameBoard getBoard1() { return board1; }
+    GameBoard getBoard2() { return board2; }
     Ship[] getShip(int id) {
         if(id == 1) return ship1;
         if(id == 2) return ship2;

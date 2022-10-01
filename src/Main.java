@@ -7,10 +7,6 @@ public class Main {
     public static void main(String args[])
     {
         /*
-        Server myserver = new Server(); // create server
-        myserver.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-        myserver.runServer();
-
         Client application;
 
         if ( args.length == 0 )
@@ -30,22 +26,14 @@ public class Main {
         Ship[] p1Ships = new Ship[5];
         Ship[] p2Ships = new Ship[5];
 
-        GameModel model = new GameModel(p1Board, p2Board, p1Ships, p2Ships, player1, player2);
+        GameModel model = new GameModel();
         GameView view = new GameView(model);
         GameController controller = new GameController(model, view);
+        view.setVisible(true);
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Hello. Welcome to BattleShip.\nCreate username: ");
-        player1.setName(sc.nextLine());
-        System.out.println("Hello " + player1.getName() + ".\nLet's play BattleShip!");
 
-        System.out.println("Hello. Welcome to BattleShip.\nCreate username for player 2: ");
-        player2.setName(sc.nextLine());
-        System.out.println("Hello " + player2.getName() + ".\nLet's play BattleShip!");
+
 
 
     }
-
-
-
 }

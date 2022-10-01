@@ -11,15 +11,16 @@ public class ClientTest
 
       // if no command line args
       if ( args.length == 0 )
-         application = new Client( "127.0.0.1" ); // connect to localhost
+         application = new Client( "131.118.58.13" ); // connect to localhost
       else
-         application = new Client( args[ 0 ] ); // use args to connect
+         application = new Client( args[0] ); // use args to connect
 
       application.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
       application.runClient(); // run client application
    } // end main
 } // end class ClientTest
 
+ //application = new Client( "127.0.0.1" );
 /**************************************************************************
  * (C) Copyright 1992-2005 by Deitel & Associates, Inc. and               *
  * Pearson Education, Inc. All Rights Reserved.                           *
