@@ -1,9 +1,6 @@
-import java.util.Scanner;
 import Headers.*;
-import Network.*;
-import javax.swing.*;
 
-public class Main {
+public class Battleship {
     public static void main(String args[])
     {
         /*
@@ -29,7 +26,7 @@ public class Main {
         GameModel model = new GameModel();
         GameView view = new GameView(model);
         GameController controller = new GameController(model, view);
-        view.setVisible(true);
+
 
 
 

@@ -1,38 +1,81 @@
 package Headers;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
 
 public class GameView extends JFrame
 {
     //Data Members
     private GameModel model;
 
-    private JTextField m_userInput = new JTextField(5);
-    private JTextField m_total = new JTextField(10);
-    private JButton button1 = new JButton("Button1");
-    // view should have a table of buttons
-    // and a table of images over the buttons.
+    private final int SIZE = 10;
+    private final String IMAGES = "/Resources/Images/";
+
+    private JButton[][] buttons = new JButton[10][10];
+    JPanel oppPanel = new JPanel();
+    JPanel myPanel = new JPanel();
+    JTextField titleTextField = new JTextField("Battleship");
+
+
 
 
     //Methods
     public GameView(GameModel gm) {
         model = gm;
 
-        m_total.setText("Test 1");
-        m_total.setEditable(false);
+        oppPanel.setLayout(new GridLayout(10,10));
+        oppPanel.setPreferredSize(new Dimension(300, 300));
+        oppPanel.setBackground(new Color(100, 200, 250));
+        oppPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 150, 200)));
 
-        JPanel content = new JPanel();
-        content.setLayout(new FlowLayout());
-        content.add(new JLabel("Input"));
-        content.add(m_userInput);
-        content.add(button1);
-        content.add(new JLabel("Total"));
-        content.add(m_total);
+        for( int col = 0; col < 10; col++)
+            for( int row = 0; row < 10; row++)
+            {
+                JButton newButton = new JButton();
+                newButton.setBackground(Color.blue);
+                newButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                buttons[col][row] = newButton;
+                oppPanel.add(newButton);
+            }
 
-        this.setContentPane(content);
-        this.pack();
+
+
+        myPanel.setLayout(new GridLayout(10,10));
+        myPanel.setPreferredSize(new Dimension(300, 300));
+        myPanel.setBackground(new Color(200, 0, 0));
+        myPanel.setBorder(BorderFactory.createLineBorder(new Color(50, 150, 200)));
+
+        for( int col = 0; col < 10; col++)
+            for( int row = 0; row < 10; row++)
+            {
+                JButton newButton = new JButton();
+                newButton.setBackground(Color.white);
+                newButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                try {
+                    Image img = ImageIO.read(getClass().getResource(IMAGES + "smoke.jpg"));
+                    newButton.setIcon(new ImageIcon(img));
+                } catch (IOException e) {
+                    System.out.println("Couldn't set field icon: " + e);
+                }
+
+                //buttons[col][row] = newButton;
+                myPanel.add(newButton);
+            }
+
+
+
         this.setTitle("Battleship");
+        this.setPreferredSize(new Dimension(400, 800));
+        this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.add(oppPanel, BorderLayout.NORTH);
+        this.add(titleTextField);
+        this.add(myPanel, BorderLayout.SOUTH);
+        this.pack();
+        this.setVisible(true);
     }
 
 
@@ -42,3 +85,7 @@ public class GameView extends JFrame
     public void showFireResult(GameBoard a, int x, int y) {}
     public void displayWin(Player p) {}
 }
+
+
+
+
