@@ -12,7 +12,9 @@ public class GameView extends JFrame
     private final int BOARD_SIZE = 10;
     private final String IMAGES = "/Resources/Images/";
 
-    private JButton[][] buttonGrid = new JButton[BOARD_SIZE][BOARD_SIZE];
+    private JButton[][] oppButtons = new JButton[BOARD_SIZE][BOARD_SIZE];
+    private JButton[][] myButtons = new JButton[BOARD_SIZE][BOARD_SIZE];
+
     private JPanel oppPanel = new JPanel();
     private JPanel myPanel = new JPanel();
     private JTextField titleTextField = new JTextField("Battleship");
@@ -49,14 +51,17 @@ public class GameView extends JFrame
                 newButton.setBackground(Color.white);
                 newButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 newButton.setBorder(BorderFactory.createLineBorder(new Color(20, 24, 24)));
-
+                newButton.setEnabled(true);
                 try {
-                    Image img = ImageIO.read(getClass().getResource(IMAGES + "smoke.jpg"));
+                    Image img = ImageIO.read(getClass().getResource(IMAGES + "water.png"));
                     newButton.setIcon(new ImageIcon(img));
                 } catch (IOException e) {
-                    System.out.println("Couldn't set field icon: " + e);
+                    System.out.println("Couldn't set icon: " + e);
                 }
-                //buttons[col][row] = newButton;
+
+                if(newPanel == myPanel) myButtons[col][row] = newButton;
+                else oppButtons[col][row] = newButton;
+
                 newPanel.add(newButton);
             }
 

@@ -13,7 +13,6 @@ public class Battleship {
 
         application.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         application.runClient();
-
         */
 
         Player player1 = new Player();
@@ -26,10 +25,6 @@ public class Battleship {
         GameModel model = new GameModel();
         GameView view = new GameView(model);
         GameController controller = new GameController(model, view);
-
-
-
-
 
 
     }
