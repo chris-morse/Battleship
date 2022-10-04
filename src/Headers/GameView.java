@@ -69,8 +69,6 @@ public class GameView extends JFrame
 
 
 
-
-
     public void displayShip(GameBoard b, Ship ship) {}
     public void showBoard(GameBoard a, GameBoard b) {}
     public void displayStatus(Ship[] ship1, Ship[] ship2) {}

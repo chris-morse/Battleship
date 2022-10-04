@@ -26,6 +26,5 @@ public class Battleship {
         GameView view = new GameView(model);
         GameController controller = new GameController(model, view);
 
-
     }
 }
