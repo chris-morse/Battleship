@@ -18,9 +18,11 @@ public class GameView extends JFrame
     private JPanel oppPanel = new JPanel();
     private JPanel myPanel = new JPanel();
     private JTextField titleTextField = new JTextField("Battleship");
-//----------------------------------------------------------------------------
 
-    public GameView(GameModel gm) {
+/*----------------------------------------------------------------------------*/
+
+    public GameView(GameModel gm)
+    {
         model = gm;
         makePanel(oppPanel); // format top panel, where the user attacks.
         makePanel(myPanel); // format bottom panel, where the user places his ships.
@@ -68,12 +70,11 @@ public class GameView extends JFrame
     }
 
 
-
     public void displayShip(GameBoard b, Ship ship) {}
     public void showBoard(GameBoard a, GameBoard b) {}
     public void displayStatus(Ship[] ship1, Ship[] ship2) {}
     public void showFireResult(GameBoard a, int x, int y) {}
-    public void displayWin(Player p) {}
+   // public void displayWin(Player p) {}
 
 }
 

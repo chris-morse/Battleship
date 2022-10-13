@@ -7,7 +7,7 @@ public class ServerTest
 {
    public static void main( String args[] )
    {
-      Server application = new Server(); // create server
+      OldServer application = new OldServer(); // create server
       application.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
       application.runServer(); // run server application
    } // end main
