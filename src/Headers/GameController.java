@@ -8,6 +8,7 @@ public class GameController
     private GameView view;
     private String username;
     private NetworkComponent networkComponent;
+    private gameState currentState;
 
     //Methods
     public GameController(GameModel m, GameView v, boolean networkType)
@@ -24,8 +25,6 @@ public class GameController
         // view.add___Listener(new ___Listener());
         // ...
     }
-
-
 
     public void autoSetupBattleShip(GameBoard b, Ship ship) {}
     public void setUpBattleShip(GameBoard b, Ship ship, int x, int y, int horOrVer) {}
