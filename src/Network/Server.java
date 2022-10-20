@@ -2,6 +2,9 @@
 // Set up a Server that will receive a connection from a client, send 
 // a string to the client, and close the connection.
 package Network;
+import Headers.Coords;
+import Headers.GameModel;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,10 +27,11 @@ public class Server implements NetworkComponent
     private ServerSocket server; // server socket
     private Socket connection; // connection to client
     private int counter = 1; // counter of number of connections
-
+    private GameModel model;
     // set up GUI
-    public Server()
+    public Server(GameModel m)
     {
+        model = m;
 
     } // end Server constructor
 
@@ -109,6 +113,47 @@ public class Server implements NetworkComponent
         } while ( !message.equals( "CLIENT>>> TERMINATE" ) );
     } // end method processConnection
 
+
+    private void respondToOpp() throws IOException
+    {
+        Coords attackCoords = null;
+        do // process messages sent from server
+        {
+            try // read message and display it
+            {
+                //opponent sends attack coordinates
+                attackCoords = ( Coords ) input.readObject(); // read new message
+
+                //if the coordinates are a hit, send back a 1
+                if(model.getMyBoard().getVal(attackCoords.getX(), attackCoords.getY()) == 1) output.writeObject( new Coords(1,0) );
+                else output.writeObject( new Coords(0,0) );
+                //if the coordinates are a miss, send back a 0.
+                output.flush();
+            } // end try
+            catch ( ClassNotFoundException classNotFoundException )
+            {
+                displayMessage( "\nUnknown object type received" );
+            } // end catch
+
+        } while ( attackCoords == null );
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // close streams and socket
     private void closeConnection()
     {
@@ -142,6 +187,55 @@ public class Server implements NetworkComponent
         } // end catch
     } // end method sendData
 
+    public boolean sendAttack(Coords coords) throws IOException
+    {
+        boolean didHit = false;
+
+        try // send object to server
+        {
+            output.writeObject(coords);
+            output.flush(); // flush data to output
+        } // end try
+        catch ( IOException ioException )
+        {
+            System.out.println( "\nError writing object" );
+        }
+
+        Coords responseCoords = null;
+
+        do // process messages sent from server
+        {
+            try // read message and display it
+            {
+                responseCoords = (Coords) input.readObject(); // read new message
+                if(responseCoords.getX() == 1) return true;
+                else return false;
+            } // end try
+            catch ( ClassNotFoundException classNotFoundException )
+            {
+                displayMessage( "\nUnknown object type received" );
+            } // end catch
+
+        } while ( responseCoords == null );
+
+
+        return didHit;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // manipulates displayArea in the event-dispatch thread
     private void displayMessage( final String messageToDisplay )
     {
@@ -170,6 +264,11 @@ public class Server implements NetworkComponent
         ); // end call to SwingUtilities.invokeLater
     } // end method setTextFieldEditable
 } // end class Server
+
+
+
+
+
 
 /**************************************************************************
  * (C) Copyright 1992-2005 by Deitel & Associates, Inc. and               *

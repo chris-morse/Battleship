@@ -108,7 +108,7 @@ public class Client implements NetworkComponent
 
     private void respondToOpp() throws IOException
     {
-        Coords attackCoords;
+        Coords attackCoords = null;
         do // process messages sent from server
         {
             try // read message and display it
@@ -117,7 +117,11 @@ public class Client implements NetworkComponent
                 attackCoords = ( Coords ) input.readObject(); // read new message
 
                 //if the coordinates are a hit, send back a 1
-                if(model.getMyBoard().getVal(attackCoords.getX(), attackCoords.getY()) == 1) output.writeObject( new Coords(1,0) );
+                if(model.getMyBoard().getVal(attackCoords.getX(), attackCoords.getY()) == 1){
+                    output.writeObject( new Coords(1,0) );
+                    // view.kill spot.
+                    model.getMyBoard().setGrid(attackCoords.getX(), attackCoords.getY(), 1);
+                }
                 else output.writeObject( new Coords(0,0) );
                 //if the coordinates are a miss, send back a 0.
                 output.flush();
@@ -127,9 +131,7 @@ public class Client implements NetworkComponent
                 displayMessage( "\nUnknown object type received" );
             } // end catch
 
-        } while ( !message.equals( "SERVER>>> TERMINATE" ) );
-
-
+        } while ( attackCoords == null );
 
 
     }

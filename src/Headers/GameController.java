@@ -17,7 +17,7 @@ public class GameController
     {
         model = m;
         view = v;
-        if (networkType) networkComponent = new Server();
+        if (networkType) networkComponent = new Server(m);
         else networkComponent = new Client("127.0.0.1", m);
         networkComponent.run();
 
@@ -79,13 +79,11 @@ public class GameController
 
     public void fire(int x, int y)
     {
-        //tell opponent to check if it hit.
-        //if yes, change oppBoard x, y to hit. Change view x,y to hit pic.
-        //if no, change oppBoard x, y to miss. Change view x,y to miss pic.
         boolean hit = false;
         try {
-            networkComponent.sendAttack(new Coords(x, y));
-        } catch(IOException ioException){//something here}
+           hit = networkComponent.sendAttack(new Coords(x, y));
+        } catch(IOException ioException)
+        { /*something here*/ }
 
         if(hit) {
             model.setOppBoard(x, y, 1);
@@ -96,10 +94,13 @@ public class GameController
             //view.setOppBoard(x y missImage)
         }
 
+        if(checkWin()) gameOver();
+
+
 
     }
 
-    // boolean checkWin() {}
+    boolean checkWin() {return false;}
 
 
 
