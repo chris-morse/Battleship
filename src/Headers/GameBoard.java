@@ -12,8 +12,8 @@ public class GameBoard
 
     }
 
-    void setGrid(int x, int y, int val) {grid[x][y] = val; }
-    int getVal(int x, int y) { return grid[x][y]; }
+    public void setGrid(int x, int y, int val) {grid[x][y] = val; }
+    public int getVal(int x, int y) { return grid[x][y]; }
 
 
 }

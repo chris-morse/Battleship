@@ -24,8 +24,8 @@ public class GameModel
 
     }
 
-    GameBoard getOppBoard() { return oppBoard; }
-    GameBoard getMyBoard() { return myBoard; }
+    public GameBoard getOppBoard() { return oppBoard; }
+    public GameBoard getMyBoard() { return myBoard; }
     Ship[] getShips() { return ships; }
 
     void setOppBoard(int x, int y, int val){ oppBoard.setGrid(x, y, val); }

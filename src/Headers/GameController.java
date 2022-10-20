@@ -1,6 +1,8 @@
 package Headers;
 import Network.*;
 
+import java.io.IOException;
+
 public class GameController
 {
     //Data Members
@@ -16,10 +18,10 @@ public class GameController
         model = m;
         view = v;
         if (networkType) networkComponent = new Server();
-        else networkComponent = new Client("127.0.0.1");
+        else networkComponent = new Client("127.0.0.1", m);
         networkComponent.run();
-        state = 1;
 
+        disableAttack();
 
         //Welcome to battleship
         //please place your ships now
@@ -27,9 +29,11 @@ public class GameController
         //wait for signal that opponent placed ships
         //now the game can begin.
 
+        if(networkType){enableAttack();}
+
         do {
             playBattleship();
-        } while(model.myShipsLeft >0 && model.oppShipsLeft >0);
+        } while(model.myShipsLeft > 0 && model.oppShipsLeft > 0);
 
         gameOver();
 
@@ -39,8 +43,12 @@ public class GameController
         // ...
 
     }
+
+
+
     public void playBattleship()
     {
+
 
         // if server, go first.
         // if client, wait for server.
@@ -52,6 +60,8 @@ public class GameController
 
 
 
+
+
     }
 
     public void gameOver()
@@ -60,7 +70,8 @@ public class GameController
 
     }
 
-
+    public void enableAttack(){}
+    public void disableAttack(){}
 
     public void autoSetupBattleShip(GameBoard b, Ship ship) {}
     public void setUpBattleShip(GameBoard b, Ship ship, int x, int y, int horOrVer) {}
@@ -72,6 +83,10 @@ public class GameController
         //if yes, change oppBoard x, y to hit. Change view x,y to hit pic.
         //if no, change oppBoard x, y to miss. Change view x,y to miss pic.
         boolean hit = false;
+        try {
+            networkComponent.sendAttack(new Coords(x, y));
+        } catch(IOException ioException){//something here}
+
         if(hit) {
             model.setOppBoard(x, y, 1);
             //view.setOppBoard(x y smokeImage)

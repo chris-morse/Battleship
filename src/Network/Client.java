@@ -1,6 +1,9 @@
 // Fig. 24.7: Client.java
 // Client that reads and displays information sent from a Server.
 package Network;
+import Headers.Coords;
+import Headers.GameModel;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,12 +27,12 @@ public class Client implements NetworkComponent
     private String message = ""; // message from server
     private String chatServer; // host server for this application
     private Socket client; // socket to communicate with server
-
+    private GameModel model;
     // initialize chatServer and set up GUI
-    public Client(String host )
+    public Client(String host, GameModel gamemodel )
     {
         chatServer = host; // set server to which this client connects
-
+        model = gamemodel;
     } // end Client constructor
 
     // connect to server and process messages from server
@@ -102,6 +105,35 @@ public class Client implements NetworkComponent
         } while ( !message.equals( "SERVER>>> TERMINATE" ) );
     } // end method processConnection
 
+
+    private void respondToOpp() throws IOException
+    {
+        Coords attackCoords;
+        do // process messages sent from server
+        {
+            try // read message and display it
+            {
+                //opponent sends attack coordinates
+                attackCoords = ( Coords ) input.readObject(); // read new message
+
+                //if the coordinates are a hit, send back a 1
+                if(model.getMyBoard().getVal(attackCoords.getX(), attackCoords.getY()) == 1) output.writeObject( new Coords(1,0) );
+                else output.writeObject( new Coords(0,0) );
+                //if the coordinates are a miss, send back a 0.
+                output.flush();
+            } // end try
+            catch ( ClassNotFoundException classNotFoundException )
+            {
+                displayMessage( "\nUnknown object type received" );
+            } // end catch
+
+        } while ( !message.equals( "SERVER>>> TERMINATE" ) );
+
+
+
+
+    }
+
     // close streams and socket
     private void closeConnection()
     {
@@ -134,6 +166,41 @@ public class Client implements NetworkComponent
             System.out.println( "\nError writing object" );
         } // end catch
     } // end method sendData
+
+    public boolean sendAttack(Coords coords) throws IOException
+    {
+        boolean didHit = false;
+
+        try // send object to server
+        {
+            output.writeObject(coords);
+            output.flush(); // flush data to output
+        } // end try
+        catch ( IOException ioException )
+        {
+            System.out.println( "\nError writing object" );
+        }
+
+        Coords responseCoords = null;
+
+        do // process messages sent from server
+        {
+            try // read message and display it
+            {
+               responseCoords = (Coords) input.readObject(); // read new message
+                if(responseCoords.getX() == 1) return true;
+                else return false;
+            } // end try
+            catch ( ClassNotFoundException classNotFoundException )
+            {
+                displayMessage( "\nUnknown object type received" );
+            } // end catch
+
+        } while ( responseCoords == null );
+
+
+        return didHit;
+    }
 
     // manipulates displayArea in the event-dispatch thread
     private void displayMessage( final String messageToDisplay )
