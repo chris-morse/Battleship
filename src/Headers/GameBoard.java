@@ -4,7 +4,16 @@ public class GameBoard
 {
     private static int[][] grid = new int[10][10];
 
-    public GameBoard(){}
-    void setGrid(int x, int y, int val) {grid[x][y] = val;}
+    public GameBoard()
+    {
+        for (int row = 0; row < 10; row++)
+            for (int col = 0; col < 10; col++)
+                grid[row][col] = 0;
+
+    }
+
+    void setGrid(int x, int y, int val) {grid[x][y] = val; }
+    int getVal(int x, int y) { return grid[x][y]; }
+
 
 }

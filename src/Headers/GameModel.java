@@ -3,29 +3,32 @@ package Headers;
 public class GameModel
 {
 
-    private GameBoard board1;
-    private GameBoard board2;
-    private Ship[] ship1;
-    private Ship[] ship2;
+    private GameBoard oppBoard;
+    private GameBoard myBoard;
+    private Ship[] ships;
+    public int myShipsLeft;
+    public int oppShipsLeft;
 
     public GameModel()
     {
-        board1 = new GameBoard();
-        board2 = new GameBoard();
-        ship1 = new Ship[5];
-        ship2 = new Ship[5];
+        oppBoard = new GameBoard();
+        myBoard = new GameBoard();
+        ships = new Ship[5];
+        ships[0] = new Ship(2);
+        ships[1] = new Ship(3);
+        ships[2] = new Ship(3);
+        ships[3] = new Ship(4);
+        ships[4] = new Ship(5);
+        myShipsLeft = 5;
+        oppShipsLeft = 5;
+
     }
 
-    GameBoard getBoard1() { return board1; }
-    GameBoard getBoard2() { return board2; }
-    Ship[] getShip(int id) {
-        if(id == 1) return ship1;
-        if(id == 2) return ship2;
-        else throw new IllegalArgumentException("Invalid ID");
-    }
+    GameBoard getOppBoard() { return oppBoard; }
+    GameBoard getMyBoard() { return myBoard; }
+    Ship[] getShips() { return ships; }
 
-    void setBoard1(GameBoard b) {board1 = b;}
-    void setBoard2(GameBoard b) {board2 = b;}
+    void setOppBoard(int x, int y, int val){ oppBoard.setGrid(x, y, val); }
     void setShip(int id, int x, int y, int status) {}
 
 }
