@@ -28,10 +28,8 @@ public class GameController
                 view.oppButtons[rows][cols].addActionListener(handler);
             }
 
-
         autoSetupBattleship();
         // "PLACE SHIPS" METHOD HERE
-
 
         if(!isServer) enableAttack();
         else opponentMove();
@@ -86,8 +84,7 @@ public class GameController
     public void opponentMove()
     {
         int message = network.waitForPackets();
-        int messageX = message / 10;
-        int messageY = message % 10;
+        int messageX = message / 10; int messageY = message % 10;
         boolean didHit = model.getAttacked(messageX, messageY);
         int response = didHit ? 1 : 0;
         network.sendPacket(response);
@@ -105,12 +102,8 @@ public class GameController
     boolean checkWin() { return (model.getHits() == 17) ? true : false; }
     boolean checkLose() { return (model.getMyShips() == 0) ? true : false; }
 
-    public void enableAttack(){
-        view.enableOppGrid();
-    }
-    public void disableAttack(){
-        view.disableOppGrid();
-    }
+    public void enableAttack() { view.enableOppGrid(); }
+    public void disableAttack(){ view.disableOppGrid(); }
 
     public void autoSetupBattleship()
     {
