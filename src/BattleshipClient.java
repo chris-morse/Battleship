@@ -3,12 +3,10 @@ import Headers.*;
 public class BattleshipClient {
     public static void main(String args[])
     {
-        boolean networkType = false;
+        boolean isServer = false;
         GameModel model = new GameModel();
         GameView view = new GameView(model);
-        GameController controller = new GameController(model, view, networkType);
-
-
+        GameController controller = new GameController(model, view, isServer);
 
     }
 }

@@ -1,240 +1,94 @@
-// Fig. 24.7: Client.java
-// Client that reads and displays information sent from a Server.
-package Network;
-import Headers.Coords;
-import Headers.GameModel;
-
-import java.io.EOFException;
+package Network;// Fig. 24.11: Network.Client.java
+// Network.Client that sends and receives packets to/from a server.
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import java.net.SocketException;
+import java.nio.ByteBuffer;
 
 public class Client implements NetworkComponent
 {
+   private DatagramSocket socket; // socket to connect to server
 
-    private ObjectOutputStream output; // output stream to server
-    private ObjectInputStream input; // input stream from server
-    private String message = ""; // message from server
-    private String chatServer; // host server for this application
-    private Socket client; // socket to communicate with server
-    private GameModel model;
-    // initialize chatServer and set up GUI
-    public Client(String host, GameModel gamemodel )
-    {
-        chatServer = host; // set server to which this client connects
-        model = gamemodel;
-    } // end Client constructor
+   // set up GUI and DatagramSocket
+   public Client()
+   {
+      try // create DatagramSocket for sending and receiving packets
+      {
+         socket = new DatagramSocket();
+      } // end try
+      catch ( SocketException socketException ) 
+      {
+         socketException.printStackTrace();
+         System.exit( 1 );
+      } // end catch
+   } // end Network.Client constructor
 
-    // connect to server and process messages from server
-    public void run()
-    {
-        try // connect to server, get streams, process connection
-        {
-            connectToServer(); // create a Socket to make connection
-            getStreams(); // get the input and output streams
-            processConnection(); // process connection
-        } // end try
-        catch ( EOFException eofException )
-        {
-            displayMessage( "\nClient terminated connection" );
-        } // end catch
-        catch ( IOException ioException )
-        {
-            ioException.printStackTrace();
-        } // end catch
-        finally
-        {
-            closeConnection(); // close connection
-        } // end finally
-    } // end method runClient
+   public void sendPacket(int coords)
+   {
+      try // create and send packet
+      {
 
-    // connect to server
-    private void connectToServer() throws IOException
-    {
-        displayMessage( "Attempting connection\n" );
+         System.out.println( "\nSending packet containing integer message: " + coords + "\n" );
 
-        // create Socket to make connection to server
-        client = new Socket( InetAddress.getByName( chatServer ), 12345 );
+         byte data[] = ByteBuffer.allocate(4).putInt(coords).array(); // convert to bytes
 
-        // display connection information
-        displayMessage( "Connected to: " +
-                client.getInetAddress().getHostName() );
-    } // end method connectToServer
+         // create sendPacket
+         DatagramPacket sendPacket = new DatagramPacket(
+                 data, data.length, InetAddress.getLocalHost(), 5000 );
 
-    // get streams to send and receive data
-    private void getStreams() throws IOException
-    {
-        // set up output stream for objects
-        output = new ObjectOutputStream( client.getOutputStream() );
-        output.flush(); // flush output buffer to send header information
-
-        // set up input stream for objects
-        input = new ObjectInputStream( client.getInputStream() );
-
-        displayMessage( "\nGot I/O streams\n" );
-    } // end method getStreams
-
-    // process connection with server
-    private void processConnection() throws IOException
-    {
-        // enable enterField so client user can send messages
-        setTextFieldEditable( true );
-
-        do // process messages sent from server
-        {
-            try // read message and display it
-            {
-                message = ( String ) input.readObject(); // read new message
-                displayMessage( "\n" + message ); // display message
-            } // end try
-            catch ( ClassNotFoundException classNotFoundException )
-            {
-                displayMessage( "\nUnknown object type received" );
-            } // end catch
-
-        } while ( !message.equals( "SERVER>>> TERMINATE" ) );
-    } // end method processConnection
+         socket.send( sendPacket ); // send packet
+         System.out.println( "Packet sent\n" );
+      } // end try
+      catch ( IOException ioException )
+      {
+         System.out.println( ioException.toString() + "\n" );
+         ioException.printStackTrace();
+      } // end catch
+   } // end sendPacket
 
 
-    private void respondToOpp() throws IOException
-    {
-        Coords attackCoords = null;
-        do // process messages sent from server
-        {
-            try // read message and display it
-            {
-                //opponent sends attack coordinates
-                attackCoords = ( Coords ) input.readObject(); // read new message
+   // wait for packets to arrive from Network.Server, display packet contents
+   public int waitForPackets()
+   {
+      while ( true ) 
+      {
+         try // receive packet and display contents
+         {
+            byte data[] = new byte[ 100 ]; // set up packet
+            DatagramPacket receivePacket = new DatagramPacket( data, data.length );
 
-                //if the coordinates are a hit, send back a 1
-                if(model.getMyBoard().getVal(attackCoords.getX(), attackCoords.getY()) == 1){
-                    output.writeObject( new Coords(1,0) );
-                    // view.kill spot.
-                    model.getMyBoard().setGrid(attackCoords.getX(), attackCoords.getY(), 1);
-                }
-                else output.writeObject( new Coords(0,0) );
-                //if the coordinates are a miss, send back a 0.
-                output.flush();
-            } // end try
-            catch ( ClassNotFoundException classNotFoundException )
-            {
-                displayMessage( "\nUnknown object type received" );
-            } // end catch
+            socket.receive( receivePacket ); // wait for packet
 
-        } while ( attackCoords == null );
+            // display packet contents
+            System.out.println( "\nPacket received:" +
+               "\nFrom host: " + receivePacket.getAddress() + 
+               "\nHost port: " + receivePacket.getPort() + 
+               "\nLength: " + receivePacket.getLength() + 
+               "\nContaining:\n\t" + new String( receivePacket.getData()));
 
+            byte[] message = receivePacket.getData();
+            int coords = ByteBuffer.wrap(message).getInt();
+            System.out.println("coords: " + coords);
+            return coords;
+         } // end try
+         catch ( IOException exception ) 
+         {
+            System.out.println( exception.toString() + "\n" );
+            exception.printStackTrace();
+         } // end catch
+      } // end while
+   } // end method waitForPackets
 
-    }
-
-    // close streams and socket
-    private void closeConnection()
-    {
-        displayMessage( "\nClosing connection" );
-        setTextFieldEditable( false ); // disable enterField
-
-        try
-        {
-            output.close(); // close output stream
-            input.close(); // close input stream
-            client.close(); // close socket
-        } // end try
-        catch ( IOException ioException )
-        {
-            ioException.printStackTrace();
-        } // end catch
-    } // end method closeConnection
-
-    // send message to server
-    private void sendData( String message )
-    {
-        try // send object to server
-        {
-            output.writeObject( "CLIENT>>> " + message );
-            output.flush(); // flush data to output
-            displayMessage( "\nCLIENT>>> " + message );
-        } // end try
-        catch ( IOException ioException )
-        {
-            System.out.println( "\nError writing object" );
-        } // end catch
-    } // end method sendData
-
-    public boolean sendAttack(Coords coords) throws IOException
-    {
-        boolean didHit = false;
-
-        try // send object to server
-        {
-            output.writeObject(coords);
-            output.flush(); // flush data to output
-        } // end try
-        catch ( IOException ioException )
-        {
-            System.out.println( "\nError writing object" );
-        }
-
-        Coords responseCoords = null;
-
-        do // process messages sent from server
-        {
-            try // read message and display it
-            {
-               responseCoords = (Coords) input.readObject(); // read new message
-                if(responseCoords.getX() == 1) return true;
-                else return false;
-            } // end try
-            catch ( ClassNotFoundException classNotFoundException )
-            {
-                displayMessage( "\nUnknown object type received" );
-            } // end catch
-
-        } while ( responseCoords == null );
+   // manipulates displayArea in the event-dispatch thread
 
 
-        return didHit;
-    }
+}  // end class Network.Client
 
-    // manipulates displayArea in the event-dispatch thread
-    private void displayMessage( final String messageToDisplay )
-    {
-        SwingUtilities.invokeLater(
-                new Runnable()
-                {
-                    public void run() // updates displayArea
-                    {
-                        System.out.println( messageToDisplay );
-                    } // end method run
-                }  // end anonymous inner class
-        ); // end call to SwingUtilities.invokeLater
-    } // end method displayMessage
-
-    // manipulates enterField in the event-dispatch thread
-    private void setTextFieldEditable( final boolean editable )
-    {
-        SwingUtilities.invokeLater(
-                new Runnable()
-                {
-                    public void run() // sets enterField's editability
-                    {
-                       //*** enterField.setEditable( editable );
-                    } // end method run
-                } // end anonymous inner class
-        ); // end call to SwingUtilities.invokeLater
-    } // end method setTextFieldEditable
-} // end class Client
 
 /**************************************************************************
- * (C) Copyright 1992-2005 by Deitel & Associates, Inc. and               *
+ * (C) Copyright 1992-2007 by Deitel & Associates, Inc. and               *
  * Pearson Education, Inc. All Rights Reserved.                           *
  *                                                                        *
  * DISCLAIMER: The authors and publisher of this book have used their     *

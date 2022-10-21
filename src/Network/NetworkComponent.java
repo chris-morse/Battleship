@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface NetworkComponent
 {
-    public void run();
-    public boolean sendAttack(Coords coords) throws IOException;
+    public void sendPacket(int coords);
+    public int waitForPackets();
 }

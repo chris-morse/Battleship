@@ -12,7 +12,7 @@ public class GameView extends JFrame
     private final int BOARD_SIZE = 10;
     private final String IMAGES = "/Resources/Images/";
 
-    private JButton[][] oppButtons = new JButton[BOARD_SIZE][BOARD_SIZE];
+    public OppButton[][] oppButtons = new OppButton[BOARD_SIZE][BOARD_SIZE];
     private JButton[][] myButtons = new JButton[BOARD_SIZE][BOARD_SIZE];
 
     private JPanel oppPanel = new JPanel();
@@ -39,6 +39,44 @@ public class GameView extends JFrame
         this.setVisible(true);
     }
 
+    class OppButton extends JButton
+    {
+        private int row;
+        private int col;
+        public boolean isAlive;
+        public int getRow(){ return row; }
+        public int getCol(){ return col; }
+
+        OppButton(int x, int y)
+        {
+            super();
+            isAlive = true;
+            row = x;
+            col = y;
+            setBackground(Color.white);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            setBorder(BorderFactory.createLineBorder(new Color(20, 24, 24)));
+            setEnabled(true);
+
+            try {
+                Image img = ImageIO.read(getClass().getResource(IMAGES + "water.png"));
+                setIcon(new ImageIcon(img));
+            } catch (IOException e) {
+                System.out.println("Couldn't set icon: " + e);
+            }
+        }
+    }
+
+    public void attack(int x, int y)
+    { //turn the button into smoke
+        try {
+        Image img = ImageIO.read(getClass().getResource(IMAGES + "smoke.jpg"));
+        oppButtons[x][y].setIcon(new ImageIcon(img));
+        } catch (IOException e) {
+            System.out.println("Couldn't set icon: " + e);
+        }
+
+    }
 
     private void makePanel(JPanel newPanel)
     {
@@ -49,24 +87,33 @@ public class GameView extends JFrame
         //Make 100 buttons
         for( int col = 0; col < 10; col++)
             for( int row = 0; row < 10; row++) {
-                JButton newButton = new JButton();
-                newButton.setBackground(Color.white);
-                newButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                newButton.setBorder(BorderFactory.createLineBorder(new Color(20, 24, 24)));
-                newButton.setEnabled(true);
-                try {
-                    Image img = ImageIO.read(getClass().getResource(IMAGES + "water.png"));
-                    newButton.setIcon(new ImageIcon(img));
-                } catch (IOException e) {
-                    System.out.println("Couldn't set icon: " + e);
+               JButton newButton;
+                if(newPanel == oppPanel){
+                    newButton = new OppButton(col, row);
+                    oppButtons[col][row] = (OppButton) newButton;
                 }
-
-                if(newPanel == myPanel) myButtons[col][row] = newButton;
-                else oppButtons[col][row] = newButton;
-
+                else {
+                    newButton = new JButton();
+                    myButtons[col][row] = newButton;
+                }
                 newPanel.add(newButton);
             }
 
+
+    }
+
+    public void enableOppGrid(){
+        for (int rows = 0; rows < 10; rows++)
+            for (int cols = 0; cols < 10; cols++) {
+                if (oppButtons[rows][cols].isAlive) oppButtons[rows][cols].setEnabled(true);
+            }
+    }
+
+    public void disableOppGrid(){
+        for (int rows = 0; rows < 10; rows++)
+            for (int cols = 0; cols < 10; cols++) {
+                oppButtons[rows][cols].setEnabled(false);
+            }
     }
 
 

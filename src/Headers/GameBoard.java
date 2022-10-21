@@ -7,8 +7,10 @@ public class GameBoard
     public GameBoard()
     {
         for (int row = 0; row < 10; row++)
-            for (int col = 0; col < 10; col++)
+            for (int col = 0; col < 10; col++) {
                 grid[row][col] = 0;
+                if(row ==1)grid[row][col] = 1;
+            }
 
     }
 
