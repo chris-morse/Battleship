@@ -7,6 +7,5 @@ public class BattleshipClient {
         GameModel model = new GameModel();
         GameView view = new GameView(model);
         GameController controller = new GameController(model, view, isServer);
-
     }
 }

@@ -1,19 +1,20 @@
 package Headers;
 import Network.*;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class GameController
 {
-    //Data Members
+    private final String IMAGES = "/Resources/Images/";
     private NetworkComponent network;
     private GameModel model;
     private GameView view;
-    private String username;
-    private int state;
 
-    //Methods
     public GameController(GameModel m, GameView v, boolean isServer)
     {
         model = m;
@@ -27,15 +28,17 @@ public class GameController
                 view.oppButtons[rows][cols].addActionListener(handler);
             }
 
-        // PLACE SHIPS
-        // METHOD HERE
+
+        autoSetupBattleship();
+        // "PLACE SHIPS" METHOD HERE
+
 
         if(!isServer) enableAttack();
         else opponentMove();
 
         // enableOppGrid
         // When button clicked,
-        // disable oppgrid
+        // disable oppGrid
         // send attack coords
         // get response
         // if true, kill grid spot
@@ -93,7 +96,11 @@ public class GameController
     }
 
     public void gameOver(boolean didWin)
-    {}
+    {
+        disableAttack();
+        String message = didWin ? "Congrats! You won!" : "Sorry. You lost.";
+        System.out.println("Game over. " + message);
+    }
 
     boolean checkWin() { return (model.getHits() == 17) ? true : false; }
     boolean checkLose() { return (model.getMyShips() == 0) ? true : false; }
@@ -105,7 +112,23 @@ public class GameController
         view.disableOppGrid();
     }
 
-    public void autoSetupBattleShip(GameBoard b, Ship ship) {}
+    public void autoSetupBattleship()
+    {
+        model.autoSetupBattleship();
+        for (int rows = 0; rows < 10; rows++)
+            for (int cols = 0; cols < 10; cols++) {
+                if(model.getMyBoard().getVal(rows, cols) == 1)
+                {
+                    try {
+                        Image img = ImageIO.read(getClass().getResource(IMAGES + "smoke.jpg"));
+                        view.myButtons[rows][cols].setIcon(new ImageIcon(img));
+                    } catch (IOException e) {
+                        System.out.println("Couldn't set icon: " + e);
+                    }                    System.out.println("turning red.");
+                }
+
+            }
+    }
     public void setUpBattleShip(GameBoard b, Ship ship, int x, int y, int horOrVer) {}
 
 } // end Class GameController

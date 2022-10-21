@@ -9,13 +9,9 @@ public class GameBoard
         for (int row = 0; row < 10; row++)
             for (int col = 0; col < 10; col++) {
                 grid[row][col] = 0;
-                if(row ==1)grid[row][col] = 1;
             }
-
     }
 
     public void setGrid(int x, int y, int val) {grid[x][y] = val; }
     public int getVal(int x, int y) { return grid[x][y]; }
-
-
 }

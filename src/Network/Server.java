@@ -80,9 +80,6 @@ public class Server implements NetworkComponent
       } // end catch
    } // end method sendPacketToClient
 
-
-
-
 } // end class Network.Server
 
 /**************************************************************************

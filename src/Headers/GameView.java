@@ -13,7 +13,7 @@ public class GameView extends JFrame
     private final String IMAGES = "/Resources/Images/";
 
     public OppButton[][] oppButtons = new OppButton[BOARD_SIZE][BOARD_SIZE];
-    private JButton[][] myButtons = new JButton[BOARD_SIZE][BOARD_SIZE];
+    public JButton[][] myButtons = new JButton[BOARD_SIZE][BOARD_SIZE];
 
     private JPanel oppPanel = new JPanel();
     private JPanel myPanel = new JPanel();

@@ -8,6 +8,7 @@ public class GameModel
     private Ship[] ships;
     private int myShips;
     private int hits;
+    private int count;
 
     public GameModel()
     {
@@ -22,22 +23,58 @@ public class GameModel
 
         myShips = 17;
         hits = 0;
-
+    count = 0;
     }
 
-    boolean placeShip(int row, int col, boolean direction, Ship ship)
+    // autoSetupBattleship
+    // For each ship: pick random direction.
+    // If horiz, pick random x, and y <= 10-length.
+    // If vert, pick x <= 10-length, random y.
+    // Check if collides w/ other ships. If it does, restart.
+    public void autoSetupBattleship() {
+        for (int i = 0; i < 5; i++)
+            placeRandomShip(ships[i]);
+        System.out.println("Ships added: " + count);
+    }
+
+    public void placeRandomShip(Ship ship)
+    {
+        boolean collides = true;
+        int horiz = (int)(Math.random() * 2);
+        int shipRow, shipCol;
+        boolean horizontal = (horiz == 1) ? true : false;
+        do{
+            if(horizontal){
+                shipCol = (int)(Math.random() * (9 - ship.getLength()+1 + 1));
+                shipRow = (int)(Math.random() * (9 + 1));
+            }
+            else{
+                shipCol = (int)(Math.random() * (9 + 1));
+                shipRow = (int)(Math.random() * (9-ship.getLength()+1 + 1));
+            }
+            collides = placeShip(shipRow, shipCol, horizontal, ship);
+        }
+        while(!collides);
+    }
+
+    boolean placeShip(int row, int col, boolean horizontal, Ship ship)
     {
         int length = ship.getLength();
-        int iter = direction ? col : row;
-        // check if you can place a ship
+        int iter = horizontal ? col : row;
+
+        // check if the ship will collide with any ships.
         for (int i = iter; i < iter+length; i++) {
-            if(direction) if(myBoard.getVal(row, i) == 1) return false;
-            else { if(myBoard.getVal(i, col) == 1) return false; }
+            if(horizontal) {
+                if(myBoard.getVal(row, i) == 1) return false;}
+            else {
+                if(myBoard.getVal(i, col) == 1) return false; }
         }
+
         //place the ship
         for (int i = iter; i < iter+length; i++) {
-           if(direction) myBoard.setGrid(row, i, 1);
+           if(horizontal) myBoard.setGrid(row, i, 1);
            else myBoard.setGrid(i, col, 1);
+           count++;
         }
         return true;
     }
