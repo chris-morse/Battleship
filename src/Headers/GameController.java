@@ -52,11 +52,10 @@ public class GameController
         public void actionPerformed(ActionEvent event)
         {
             disableAttack();
-            GameView.OppButton thisButton = (GameView.OppButton) event.getSource();
-            fire(thisButton.getRow(), thisButton.getCol() );
-            ((GameView.OppButton) event.getSource()).setEnabled(false);
             ((GameView.OppButton) event.getSource()).removeActionListener(this);
             ((GameView.OppButton) event.getSource()).isAlive = false;
+            GameView.OppButton thisButton = (GameView.OppButton) event.getSource();
+            fire(thisButton.getRow(), thisButton.getCol() );
         }
     }
 

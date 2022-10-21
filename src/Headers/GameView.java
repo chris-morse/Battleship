@@ -66,28 +66,16 @@ public class GameView extends JFrame
             }
         }
     }
-
-    public void attack(int x, int y)
-    { //turn the button into smoke
-        try {
-        Image img = ImageIO.read(getClass().getResource(IMAGES + "smoke.jpg"));
-        oppButtons[x][y].setIcon(new ImageIcon(img));
-        } catch (IOException e) {
-            System.out.println("Couldn't set icon: " + e);
-        }
-
-    }
-
     private void makePanel(JPanel newPanel)
     {
         newPanel.setLayout(new GridLayout(10,10));
         newPanel.setPreferredSize(new Dimension(300, 300));
         newPanel.setBackground(new Color(51, 152, 208));
 
-        //Make 100 buttons
+        //Make all 100 buttons
         for( int col = 0; col < 10; col++)
             for( int row = 0; row < 10; row++) {
-               JButton newButton;
+                JButton newButton;
                 if(newPanel == oppPanel){
                     newButton = new OppButton(col, row);
                     oppButtons[col][row] = (OppButton) newButton;
@@ -98,7 +86,16 @@ public class GameView extends JFrame
                 }
                 newPanel.add(newButton);
             }
+    }
 
+    public void attack(int x, int y)
+    { //turn the button into smoke
+        try {
+        Image img = ImageIO.read(getClass().getResource(IMAGES + "smoke.jpg"));
+        oppButtons[x][y].setIcon(new ImageIcon(img));
+        } catch (IOException e) {
+            System.out.println("Couldn't set icon: " + e);
+        }
 
     }
 
@@ -116,13 +113,11 @@ public class GameView extends JFrame
             }
     }
 
-
     public void displayShip(GameBoard b, Ship ship) {}
     public void showBoard(GameBoard a, GameBoard b) {}
     public void displayStatus(Ship[] ship1, Ship[] ship2) {}
     public void showFireResult(GameBoard a, int x, int y) {}
    // public void displayWin(Player p) {}
-
 }
 
 

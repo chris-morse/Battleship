@@ -42,8 +42,7 @@ public class Server implements NetworkComponent
             clientPort = receivePacket.getPort();
 
             // display information from received packet 
-            System.out.println(
-               "\nPacket received:" +
+            System.out.println("\nPacket received:" +
                "\nFrom host: " + receivePacket.getAddress() + 
                "\nHost port: " + receivePacket.getPort() + 
                "\nLength: " + receivePacket.getLength() + 
@@ -68,17 +67,11 @@ public class Server implements NetworkComponent
       try // create and send packet
       {
          System.out.println("\n\nSend data to client. Message: " + coords);
-
          byte data[] = ByteBuffer.allocate(4).putInt(coords).array(); // convert to bytes
-
-
          // create packet to send
-         DatagramPacket sendPacket = new DatagramPacket(
-                 data, data.length, clientAddress, clientPort);
-
+         DatagramPacket sendPacket = new DatagramPacket(data, data.length, clientAddress, clientPort);
          socket.send(sendPacket); // send packet to client
          System.out.println("Packet sent\n");
-
       } // end try
       catch ( IOException ioException )
       {

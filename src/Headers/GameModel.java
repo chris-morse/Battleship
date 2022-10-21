@@ -6,8 +6,8 @@ public class GameModel
     private GameBoard oppBoard;
     private GameBoard myBoard;
     private Ship[] ships;
-    public int myShips;
-    public int hits;
+    private int myShips;
+    private int hits;
 
     public GameModel()
     {
@@ -58,7 +58,7 @@ public class GameModel
         if(myBoard.getVal(row, col) == 1) {
             didHit = true;
             myBoard.setGrid(row, col, 2);
-            myShips--;
+            decMyShips();
         }
         return didHit;
     }
