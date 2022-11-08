@@ -169,6 +169,9 @@ public class GameController
         } catch(IOException ioException){
             System.out.println("IOEx in fire() (writing coords)");
         }
+
+
+
         enemyMsg = -1;
         getResponse();
 
@@ -181,10 +184,11 @@ public class GameController
         boolean waiting = true;
         while(waiting) {
             try {
+                Thread.sleep(50);
                 if (rfsRunnable.dataIn.readInt() == 44444) {
                     System.out.println("Got 44444 verification.");
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         System.out.println("IE in Thread.sleep() opp move");
                     }
@@ -196,6 +200,8 @@ public class GameController
                 }
             } catch(IOException ioException) {
                 System.out.println("IOEx in opponentMove()");
+            }catch (InterruptedException e) {
+                System.out.println("IE in Thread.sleep() opp move");
             }
         }
 
