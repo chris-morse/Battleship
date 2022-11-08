@@ -1,98 +1,156 @@
-package Network;// Fig. 24.9: Network.Server.java
-// Network.Server that receives and sends packets from/to a client.
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.nio.ByteBuffer;
+package Network;
+import java.io.*;
+import java.net.*;
 
-public class Server implements NetworkComponent
+public class Server
 {
-   private InetAddress clientAddress;
-   private int clientPort;
-   private DatagramSocket socket; // socket to connect to client
+    private ServerSocket serverSocket;
+    private int numPlayers;
+    private int maxPlayers;
+    private Socket p1Socket;
+    private Socket p2Socket;
+    private ReadFromClient p1ReadRunnable;
+    private ReadFromClient p2ReadRunnable;
+    private WriteToClient p1WriteRunnable;
+    private WriteToClient p2WriteRunnable;
+    private int p1msg, p2msg;
 
-   // set up GUI and DatagramSocket
-   public Server()
-   {
-      try // create DatagramSocket for sending and receiving packets
-      {
-         socket = new DatagramSocket( 5000 );
-      } // end try
-      catch ( SocketException socketException ) 
-      {
-         socketException.printStackTrace();
-         System.exit( 1 );
-      } // end catch
-   } // end Network.Server constructor
+    public Server() {
+        System.out.println("===== GAME SERVER =====");
+        numPlayers = 0;
+        maxPlayers = 2;
 
-   // wait for packets to arrive, display data and echo packet to client
-   public int waitForPackets()
-   {
-      while ( true ) 
-      {
-         try // receive packet, display contents, return copy to client
-         {
-            byte data[] = new byte[ 100 ]; // set up packet
-            DatagramPacket receivePacket = new DatagramPacket( data, data.length );
+        p1msg = -1;
+        p2msg = -1;
 
-            socket.receive( receivePacket ); // wait to receive packet
-            clientAddress = receivePacket.getAddress();
-            clientPort = receivePacket.getPort();
+        try{
+            serverSocket = new ServerSocket(12345);
+        }catch (IOException e){
+            System.out.println("IOEx from server constructor");
+        }
+    }
 
-            // display information from received packet 
-            System.out.println("\nPacket received:" +
-               "\nFrom host: " + receivePacket.getAddress() + 
-               "\nHost port: " + receivePacket.getPort() + 
-               "\nLength: " + receivePacket.getLength() + 
-               "\nContaining:\n\t" + receivePacket.getData() );
+    public void acceptConnections() {
+        try{
+            System.out.println("Waiting for players...");
 
-            byte[] message = receivePacket.getData();
-            int coords = ByteBuffer.wrap(message).getInt();
-            System.out.println("coords: " + coords);
-            return coords;
-         } // end try
-         catch ( IOException ioException )
-         {
-            System.out.println( ioException.toString());
-            ioException.printStackTrace();
-         } // end catch
-      } // end while
-   } // end method waitForPackets
+            while(numPlayers < maxPlayers)
+            {
+                Socket socket = serverSocket.accept();
+                DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
 
-   // send packet to client
-   public void sendPacket( int coords )
-   {
-      try // create and send packet
-      {
-         System.out.println("\n\nSend data to client. Message: " + coords);
-         byte data[] = ByteBuffer.allocate(4).putInt(coords).array(); // convert to bytes
-         // create packet to send
-         DatagramPacket sendPacket = new DatagramPacket(data, data.length, clientAddress, clientPort);
-         socket.send(sendPacket); // send packet to client
-         System.out.println("Packet sent\n");
-      } // end try
-      catch ( IOException ioException )
-      {
-         System.out.println( ioException.toString() + "\n" );
-         ioException.printStackTrace();
-      } // end catch
-   } // end method sendPacketToClient
+                numPlayers++;
+                outputStream.writeInt(numPlayers);
+                System.out.println("Player " + numPlayers + " has connected.");
 
-} // end class Network.Server
+                ReadFromClient readFromClient = new ReadFromClient(numPlayers, inputStream);
+                WriteToClient writeToClient = new WriteToClient(numPlayers, outputStream);
 
-/**************************************************************************
- * (C) Copyright 1992-2007 by Deitel & Associates, Inc. and               *
- * Pearson Education, Inc. All Rights Reserved.                           *
- *                                                                        *
- * DISCLAIMER: The authors and publisher of this book have used their     *
- * best efforts in preparing the book. These efforts include the          *
- * development, research, and testing of the theories and programs        *
- * to determine their effectiveness. The authors and publisher make       *
- * no warranty of any kind, expressed or implied, with regard to these    *
- * programs or to the documentation contained in these books. The authors *
- * and publisher shall not be liable in any event for incidental or       *
- * consequential damages in connection with, or arising out of, the       *
- * furnishing, performance, or use of these programs.                     *
- *************************************************************************/
+                if(numPlayers == 1) {
+                    p1Socket = socket;
+                    p1ReadRunnable = readFromClient;
+                    p1WriteRunnable = writeToClient;
+                }
+                else {
+                    p2Socket = socket;
+                    p2ReadRunnable = readFromClient;
+                    p2WriteRunnable = writeToClient;
+
+                    p1WriteRunnable.sendStartMsg();
+                    p2WriteRunnable.sendStartMsg();
+
+                    Thread readThread1 = new Thread(p1ReadRunnable);
+                    Thread readThread2 = new Thread(p2ReadRunnable);
+                    readThread1.start();
+                    readThread2.start();
+
+                    Thread writeThread1 = new Thread(p1WriteRunnable);
+                    Thread writeThread2 = new Thread(p2WriteRunnable);
+                    writeThread1.start();
+                    writeThread2.start();
+
+                } // end else
+            } // end while
+            System.out.println("No longer accepting new players.");
+
+        }catch (IOException ioException){
+            System.out.println("IOEx from acceptConnections() method");
+        } // end catch
+
+    } // end method acceptConnections
+
+    private class ReadFromClient implements Runnable
+    {
+        private int playerID;
+        private DataInputStream dataIn;
+
+        public ReadFromClient(int pid, DataInputStream in) {
+            playerID = pid;
+            dataIn = in;
+            System.out.println("Read from client " + playerID + " runnable created.");
+        }
+
+        public void run()
+        {
+            try {
+                while(true) {
+                    if(playerID == 1){
+                        p1msg = dataIn.readInt();
+                    }
+                    else {
+                        p2msg = dataIn.readInt();
+                    }
+                } // end while
+            } catch(IOException ex) {
+                System.out.println("IOex from RFC run()");
+            }
+
+        } // end method run()
+
+    } // end class RFC
+
+    private class WriteToClient implements Runnable
+    {
+        private int playerID;
+        private DataOutputStream dataOut;
+
+        public WriteToClient(int pid, DataOutputStream out) {
+            playerID = pid;
+            dataOut = out;
+            System.out.println("Write to client " + playerID + " runnable created.");
+        }
+
+        public void run() {
+            try {
+                while(true) {
+                    if(playerID == 1) {
+                        dataOut.writeInt(p2msg);
+                        dataOut.flush();
+                    } else {
+                        dataOut.writeInt(p1msg);
+                        dataOut.flush();
+                    }
+                    try {
+                        Thread.sleep(25);
+                    } catch(InterruptedException ex){
+                        System.out.println("Interrupted Ex from WTC run()");
+                    }
+
+                } // end while
+
+            } catch (IOException ex) {
+                System.out.println("IOEx from WTC run() method");
+            }
+        } // end method run()
+
+        public void sendStartMsg() {
+            try {
+                dataOut.writeUTF("We now have two players. Go!");
+            } catch (IOException ex) {
+                System.out.println("IOEx from sendStartMsg()");
+            }
+        }
+    } // end class WTC
+
+}

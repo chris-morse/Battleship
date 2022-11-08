@@ -15,15 +15,27 @@ public class GameModel
         oppBoard = new GameBoard();
         myBoard = new GameBoard();
         ships = new Ship[5];
-        ships[0] = new Ship(2);
-        ships[1] = new Ship(3);
-        ships[2] = new Ship(3);
-        ships[3] = new Ship(4);
-        ships[4] = new Ship(5);
+        String[] shipName = {"Battleship4.png", "destoryer2.png", "cruiser3.png", "submarine3.png",  "carrier5.png"};
+        ships[0] = new Ship(4, "Battleship4");
+        ships[1] = new Ship(2, "destoryer2");
+        ships[2] = new Ship(3,"cruiser3");
+        ships[3] = new Ship(3,"submarine3");
+        ships[4] = new Ship(5, "carrier5");
 
         myShips = 17;
         hits = 0;
-    count = 0;
+        count = 0;
+    }
+
+    public void incCount() { count++;}
+
+    public boolean shipsPlaced() {
+        return count == 17 ? true : false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     // autoSetupBattleship
@@ -34,7 +46,6 @@ public class GameModel
     public void autoSetupBattleship() {
         for (int i = 0; i < 5; i++)
             placeRandomShip(ships[i]);
-        System.out.println("Ships added: " + count);
     }
 
     public void placeRandomShip(Ship ship)
@@ -72,11 +83,12 @@ public class GameModel
 
         //place the ship
         for (int i = iter; i < iter+length; i++) {
-           if(horizontal) myBoard.setGrid(row, i, 1);
-           else myBoard.setGrid(i, col, 1);
-           count++;
+            if (horizontal) myBoard.setGrid(row, i, 1);
+            else myBoard.setGrid(i, col, 1);
+            count++;
         }
         return true;
+
     }
 
     public void incHits() { hits++; }
@@ -87,14 +99,14 @@ public class GameModel
 
     public GameBoard getOppBoard() { return oppBoard; }
     public GameBoard getMyBoard() { return myBoard; }
-    Ship[] getShips() { return ships; }
+    public Ship[] getShips() { return ships; }
 
     boolean getAttacked(int row, int col)
     {
         boolean didHit = false;
-        if(myBoard.getVal(row, col) == 1) {
+        if(myBoard.getVal(row, col) != 0) {
             didHit = true;
-            myBoard.setGrid(row, col, 2);
+          //  myBoard.setGrid(row, col, 2);
             decMyShips();
         }
         return didHit;
@@ -102,5 +114,6 @@ public class GameModel
 
     void setOppBoard(int x, int y, int val){ oppBoard.setGrid(x, y, val); }
     void setShip(int id, int x, int y, int status) {}
+    int getCount() { return count; }
 
 }

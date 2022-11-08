@@ -1,6 +1,6 @@
 import Headers.*;
 
-public class BattleshipClient {
+public class BC2 {
     public static void main(String args[])
     {
         GameModel model = new GameModel();
