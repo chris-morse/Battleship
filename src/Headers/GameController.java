@@ -184,24 +184,25 @@ public class GameController
         boolean waiting = true;
         while(waiting) {
             try {
-                Thread.sleep(200);
+
                 if (rfsRunnable.dataIn.readInt() == 44444) {
                     System.out.println("Got 44444 verification.");
+
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
                         System.out.println("IE in Thread.sleep() opp move");
                     }
+
                    do {
                         enemyMsg = rfsRunnable.dataIn.readInt();
                         System.out.println("****************Received response " + enemyMsg + " from opponent.");
                         waiting = false;
                     } while(enemyMsg == 44444);
-                }
+                } // end if
+
             } catch(IOException ioException) {
                 System.out.println("IOEx in opponentMove()");
-            }catch (InterruptedException e) {
-                System.out.println("IE in Thread.sleep() opp move");
             }
         }
 
