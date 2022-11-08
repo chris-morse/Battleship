@@ -189,7 +189,7 @@ public class GameController
                     System.out.println("Got 44444 verification.");
 
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         System.out.println("IE in Thread.sleep() opp move");
                     }
@@ -264,7 +264,7 @@ public class GameController
         try {
             wtsRunnable.dataOut.writeInt(44444);
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 System.out.println("IE in Thread.sleep() opp move");
             }
