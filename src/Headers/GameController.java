@@ -184,7 +184,7 @@ public class GameController
         boolean waiting = true;
         while(waiting) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(200);
                 if (rfsRunnable.dataIn.readInt() == 44444) {
                     System.out.println("Got 44444 verification.");
                     try {
@@ -263,7 +263,7 @@ public class GameController
         try {
             wtsRunnable.dataOut.writeInt(44444);
             try {
-                Thread.sleep(25);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 System.out.println("IE in Thread.sleep() opp move");
             }
