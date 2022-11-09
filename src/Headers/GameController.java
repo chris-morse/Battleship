@@ -157,7 +157,7 @@ public class GameController
             wtsRunnable.dataOut.writeInt(55555);
 
             try {
-                Thread.sleep(25);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 System.out.println("IE in Thread.sleep() opp move");
             }
@@ -169,8 +169,6 @@ public class GameController
         } catch(IOException ioException){
             System.out.println("IOEx in fire() (writing coords)");
         }
-
-
 
         enemyMsg = -1;
         getResponse();
@@ -189,14 +187,14 @@ public class GameController
                     System.out.println("Got 44444 verification.");
 
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         System.out.println("IE in Thread.sleep() opp move");
                     }
 
                    do {
                         enemyMsg = rfsRunnable.dataIn.readInt();
-                        System.out.println("****************Received response " + enemyMsg + " from opponent.");
+                        System.out.println("Received response " + enemyMsg + " from opponent.");
                         waiting = false;
                     } while(enemyMsg == 44444);
                 } // end if
@@ -216,15 +214,18 @@ public class GameController
             view.attack(attackX, attackY);
         }
         else {
-            model.setOppBoard(attackX, attackY, 2);
+            //model.setOppBoard(attackX, attackY, 2);
             view.playSound("splash.wav");
             //view.miss(x,y);
         }
 
         System.out.println("Points: " + model.getHits());
+
         if(checkWin()) {
             gameOver(true);
+            return;
         }
+
         opponentMove();
     }
 
@@ -238,7 +239,7 @@ public class GameController
                 if (rfsRunnable.dataIn.readInt() == 55555) {
                     System.out.println("Got 55555 verification.");
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         System.out.println("IE in Thread.sleep() opp move");
                     }
@@ -264,7 +265,7 @@ public class GameController
         try {
             wtsRunnable.dataOut.writeInt(44444);
             try {
-                Thread.sleep(200);
+                Thread.sleep(25);
             } catch (InterruptedException e) {
                 System.out.println("IE in Thread.sleep() opp move");
             }
@@ -282,7 +283,12 @@ public class GameController
 //                if (model.getOppBoard().getVal(i, j) == 1)
 //                    counter++;
         view.setText1("Points remaining: " + model.getMyShips());
-        if(checkLose()) gameOver(false);
+
+        if(checkLose()) {
+            gameOver(false);
+            return;
+        }
+
         enableAttack();
     }
 
